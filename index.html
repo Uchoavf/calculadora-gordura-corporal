@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculadora de Gordura Corporal - US Navy</title>
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#1a1a2e">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: #ffffff;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            padding: 40px;
+            max-width: 450px;
+            width: 100%;
+        }
+
+        h1 {
+            color: #1a1a2e;
+            font-size: 1.8em;
+            text-align: center;
+            margin-bottom: 5px;
+        }
+
+        .subtitle {
+            color: #666;
+            text-align: center;
+            font-size: 0.9em;
+            margin-bottom: 30px;
+        }
+
+        .gender-select {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 25px;
+        }
+
+        .gender-btn {
+            flex: 1;
+            padding: 14px;
+            border: 2px solid #e0e0e0;
+            border-radius: 12px;
+            background: #fafafa;
+            cursor: pointer;
+            font-size: 1em;
+            font-weight: 600;
+            color: #666;
+            transition: all 0.3s ease;
+        }
+
+        .gender-btn:hover {
+            border-color: #0f3460;
+            color: #0f3460;
+        }
+
+        .gender-btn.active {
+            background: #0f3460;
+            color: white;
+            border-color: #0f3460;
+        }
+
+        .input-group {
+            margin-bottom: 18px;
+        }
+
+        .input-group label {
+            display: block;
+            font-size: 0.9em;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 6px;
+        }
+
+        .input-group .unit {
+            color: #999;
+            font-weight: 400;
+        }
+
+        .input-group input {
+            width: 100%;
+            padding: 14px 16px;
+            border: 2px solid #e0e0e0;
+            border-radius: 12px;
+            font-size: 1em;
+            transition: border-color 0.3s ease;
+            outline: none;
+        }
+
+        .input-group input:focus {
+            border-color: #0f3460;
+        }
+
+        .input-group input::placeholder {
+            color: #ccc;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .calc-btn {
+            width: 100%;
+            padding: 16px;
+            background: linear-gradient(135deg, #0f3460, #16213e);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 1.1em;
+            font-weight: 700;
+            cursor: pointer;
+            margin-top: 10px;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .calc-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(15, 52, 96, 0.4);
+        }
+
+        .calc-btn:active {
+            transform: translateY(0);
+        }
+
+        .result {
+            margin-top: 25px;
+            padding: 20px;
+            background: #f0f4f8;
+            border-radius: 12px;
+            text-align: center;
+        }
+
+        .result .label {
+            font-size: 0.85em;
+            color: #666;
+            margin-bottom: 5px;
+        }
+
+        .result .value {
+            font-size: 2.5em;
+            font-weight: 800;
+            color: #0f3460;
+        }
+
+        .result .classification {
+            font-size: 1em;
+            font-weight: 600;
+            margin-top: 8px;
+        }
+
+        .classification.excelente { color: #2e7d32; }
+        .classification.bom { color: #4caf50; }
+        .classification.moderado { color: #ff9800; }
+        .classification.alto { color: #f44336; }
+        .classification.muito-alto { color: #b71c1c; }
+
+        .error {
+            margin-top: 15px;
+            padding: 12px;
+            background: #ffebee;
+            border-radius: 10px;
+            color: #c62828;
+            font-size: 0.9em;
+            text-align: center;
+        }
+
+        .table-container {
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #e0e0e0;
+        }
+
+        .table-container h3 {
+            text-align: center;
+            font-size: 0.95em;
+            color: #333;
+            margin-bottom: 12px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.8em;
+        }
+
+        th, td {
+            padding: 8px 10px;
+            text-align: center;
+            border-bottom: 1px solid #eee;
+        }
+
+        th {
+            background: #1a1a2e;
+            color: white;
+            font-weight: 600;
+        }
+
+        th:first-child { border-radius: 8px 0 0 0; }
+        th:last-child { border-radius: 0 8px 0 0; }
+
+        tr:hover { background: #f5f5f5; }
+
+        @media (max-width: 480px) {
+            .container {
+                padding: 25px 20px;
+            }
+            h1 { font-size: 1.4em; }
+            .result .value { font-size: 2em; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Calculadora de Gordura Corporal</h1>
+        <p class="subtitle">Método da Marinha dos EUA (US Navy)</p>
+
+        <div class="gender-select">
+            <button class="gender-btn active" data-gender="male" onclick="selectGender('male')">
+                Masculino
+            </button>
+            <button class="gender-btn" data-gender="female" onclick="selectGender('female')">
+                Feminino
+            </button>
+        </div>
+
+        <div class="input-group">
+            <label>Altura <span class="unit">(cm)</span></label>
+            <input type="number" id="height" placeholder="Ex: 175" step="0.1" min="50" max="250">
+        </div>
+
+        <div class="input-group">
+            <label>Pescoço <span class="unit">(cm)</span></label>
+            <input type="number" id="neck" placeholder="Ex: 38" step="0.1" min="20" max="80">
+        </div>
+
+        <div class="input-group">
+            <label>Cintura <span class="unit">(cm)</span></label>
+            <input type="number" id="waist" placeholder="Ex: 85" step="0.1" min="30" max="200">
+        </div>
+
+        <div class="input-group hidden" id="hipGroup">
+            <label>Quadril <span class="unit">(cm)</span></label>
+            <input type="number" id="hip" placeholder="Ex: 100" step="0.1" min="40" max="200">
+        </div>
+
+        <button class="calc-btn" onclick="calculate()">Calcular % de Gordura</button>
+
+        <div id="result" class="result" style="display: none;">
+            <div class="label">Percentual de Gordura Corporal</div>
+            <div class="value" id="bodyFatValue">--</div>
+            <div class="classification" id="classification"></div>
+        </div>
+
+        <div id="error" class="error" style="display: none;"></div>
+
+        <div class="table-container">
+            <h3>Tabela de Referência</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Classificação</th>
+                        <th>Mulheres</th>
+                        <th>Homens</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>Gordura Essencial</strong></td>
+                        <td>10–13%</td>
+                        <td>2–5%</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Atletas</strong></td>
+                        <td>14–20%</td>
+                        <td>6–13%</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Boa Forma</strong></td>
+                        <td>21–24%</td>
+                        <td>14–17%</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Média</strong></td>
+                        <td>25–31%</td>
+                        <td>18–24%</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Acima do Peso</strong></td>
+                        <td>32%+</td>
+                        <td>25%+</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script>
+        let selectedGender = 'male';
+
+        function selectGender(gender) {
+            selectedGender = gender;
+            document.querySelectorAll('.gender-btn').forEach(btn => btn.classList.remove('active'));
+            document.querySelector(`[data-gender="${gender}"]`).classList.add('active');
+
+            const hipGroup = document.getElementById('hipGroup');
+            if (gender === 'female') {
+                hipGroup.classList.remove('hidden');
+            } else {
+                hipGroup.classList.add('hidden');
+                document.getElementById('hip').value = '';
+            }
+
+            hideResult();
+            hideError();
+        }
+
+        function calculate() {
+            hideError();
+            hideResult();
+
+            const height = parseFloat(document.getElementById('height').value);
+            const neck = parseFloat(document.getElementById('neck').value);
+            const waist = parseFloat(document.getElementById('waist').value);
+
+            if (!height || !neck || !waist) {
+                showError('Preencha todos os campos obrigatórios: Altura, Pescoço e Cintura.');
+                return;
+            }
+
+            if (neck <= 0 || waist <= 0 || height <= 0) {
+                showError('As medidas devem ser maiores que zero.');
+                return;
+            }
+
+            let bodyFat;
+
+            if (selectedGender === 'male') {
+                if (waist <= neck) {
+                    showError('A medida da cintura deve ser maior que a do pescoço.');
+                    return;
+                }
+                bodyFat = 86.010 * Math.log10(waist - neck) - 70.041 * Math.log10(height) + 36.76;
+            } else {
+                const hip = parseFloat(document.getElementById('hip').value);
+                if (!hip) {
+                    showError('Preencha a medida do quadril.');
+                    return;
+                }
+                if (hip <= 0) {
+                    showError('A medida do quadril deve ser maior que zero.');
+                    return;
+                }
+                const sum = waist + hip - neck;
+                if (sum <= 0) {
+                    showError('Cintura + Quadril deve ser maior que Pescoço.');
+                    return;
+                }
+                bodyFat = 163.205 * Math.log10(sum) - 97.684 * Math.log10(height) - 78.387;
+            }
+
+            bodyFat = Math.max(0, Math.min(60, bodyFat));
+            const rounded = bodyFat.toFixed(1);
+
+            document.getElementById('bodyFatValue').textContent = rounded + '%';
+
+            const classification = getClassification(bodyFat, selectedGender);
+            const classEl = document.getElementById('classification');
+            classEl.textContent = classification.label;
+            classEl.className = 'classification ' + classification.cssClass;
+
+            document.getElementById('result').style.display = 'block';
+        }
+
+        function getClassification(bodyFat, gender) {
+            if (gender === 'male') {
+                if (bodyFat < 6) return { label: 'Gordura Essencial', cssClass: 'excelente' };
+                if (bodyFat < 14) return { label: 'Atleta', cssClass: 'excelente' };
+                if (bodyFat < 18) return { label: 'Boa Forma', cssClass: 'bom' };
+                if (bodyFat < 25) return { label: 'Média', cssClass: 'moderado' };
+                return { label: 'Acima do Peso', cssClass: 'alto' };
+            } else {
+                if (bodyFat < 14) return { label: 'Gordura Essencial', cssClass: 'excelente' };
+                if (bodyFat < 21) return { label: 'Atleta', cssClass: 'excelente' };
+                if (bodyFat < 25) return { label: 'Boa Forma', cssClass: 'bom' };
+                if (bodyFat < 32) return { label: 'Média', cssClass: 'moderado' };
+                return { label: 'Acima do Peso', cssClass: 'alto' };
+            }
+        }
+
+        function showError(msg) {
+            const el = document.getElementById('error');
+            el.textContent = msg;
+            el.style.display = 'block';
+        }
+
+        function hideError() {
+            document.getElementById('error').style.display = 'none';
+        }
+
+        function hideResult() {
+            document.getElementById('result').style.display = 'none';
+        }
+
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('sw.js');
+            });
+        }
+    </script>
+</body>
+</html>
