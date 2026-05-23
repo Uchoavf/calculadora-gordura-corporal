@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Calculadora de Gordura Corporal - US Navy</title>
+    <title>Calculadora de Gordura Corporal - US Navy + IMC</title>
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#1a1a2e">
     <style>
@@ -26,9 +26,9 @@
         .container {
             background: #ffffff;
             border-radius: 20px;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
             padding: 40px;
-            max-width: 450px;
+            max-width: 500px;
             width: 100%;
         }
 
@@ -65,19 +65,24 @@
             transition: all 0.3s ease;
         }
 
-        .gender-btn:hover {
-            border-color: #0f3460;
+        .gender-btn:hover { border-color: #0f3460; color: #0f3460; }
+        .gender-btn.active { background: #0f3460; color: white; border-color: #0f3460; }
+
+        .section-label {
+            font-size: 0.75em;
+            text-transform: uppercase;
+            letter-spacing: 1px;
             color: #0f3460;
+            font-weight: 700;
+            margin: 20px 0 10px;
+            padding-bottom: 6px;
+            border-bottom: 2px solid #0f3460;
         }
 
-        .gender-btn.active {
-            background: #0f3460;
-            color: white;
-            border-color: #0f3460;
-        }
+        .section-label:first-of-type { margin-top: 0; }
 
         .input-group {
-            margin-bottom: 18px;
+            margin-bottom: 16px;
         }
 
         .input-group label {
@@ -88,10 +93,7 @@
             margin-bottom: 6px;
         }
 
-        .input-group .unit {
-            color: #999;
-            font-weight: 400;
-        }
+        .input-group .unit { color: #999; font-weight: 400; }
 
         .input-group input {
             width: 100%;
@@ -103,17 +105,10 @@
             outline: none;
         }
 
-        .input-group input:focus {
-            border-color: #0f3460;
-        }
+        .input-group input:focus { border-color: #0f3460; }
+        .input-group input::placeholder { color: #ccc; }
 
-        .input-group input::placeholder {
-            color: #ccc;
-        }
-
-        .hidden {
-            display: none;
-        }
+        .hidden { display: none; }
 
         .calc-btn {
             width: 100%;
@@ -125,43 +120,49 @@
             font-size: 1.1em;
             font-weight: 700;
             cursor: pointer;
-            margin-top: 10px;
+            margin-top: 20px;
             transition: transform 0.2s, box-shadow 0.2s;
         }
 
         .calc-btn:hover {
             transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(15, 52, 96, 0.4);
+            box-shadow: 0 8px 25px rgba(15,52,96,0.4);
         }
+        .calc-btn:active { transform: translateY(0); }
 
-        .calc-btn:active {
-            transform: translateY(0);
-        }
-
-        .result {
+        .results-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
             margin-top: 25px;
-            padding: 20px;
+        }
+
+        .result-card {
+            padding: 18px 14px;
             background: #f0f4f8;
             border-radius: 12px;
             text-align: center;
         }
 
-        .result .label {
-            font-size: 0.85em;
-            color: #666;
-            margin-bottom: 5px;
+        .result-card .method-name {
+            font-size: 0.7em;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: #999;
+            margin-bottom: 8px;
         }
 
-        .result .value {
-            font-size: 2.5em;
+        .result-card .value {
+            font-size: 2em;
             font-weight: 800;
             color: #0f3460;
+            line-height: 1;
         }
 
-        .result .classification {
-            font-size: 1em;
+        .result-card .classification {
+            font-size: 0.85em;
             font-weight: 600;
-            margin-top: 8px;
+            margin-top: 6px;
         }
 
         .classification.excelente { color: #2e7d32; }
@@ -181,26 +182,27 @@
         }
 
         .table-container {
-            margin-top: 30px;
+            margin-top: 25px;
             padding-top: 20px;
             border-top: 1px solid #e0e0e0;
         }
 
         .table-container h3 {
             text-align: center;
-            font-size: 0.95em;
+            font-size: 0.9em;
             color: #333;
-            margin-bottom: 12px;
+            margin-bottom: 10px;
         }
 
         table {
             width: 100%;
             border-collapse: collapse;
-            font-size: 0.8em;
+            font-size: 0.75em;
+            margin-bottom: 18px;
         }
 
         th, td {
-            padding: 8px 10px;
+            padding: 7px 8px;
             text-align: center;
             border-bottom: 1px solid #eee;
         }
@@ -210,39 +212,41 @@
             color: white;
             font-weight: 600;
         }
-
         th:first-child { border-radius: 8px 0 0 0; }
         th:last-child { border-radius: 0 8px 0 0; }
-
         tr:hover { background: #f5f5f5; }
 
         @media (max-width: 480px) {
-            .container {
-                padding: 25px 20px;
-            }
+            .container { padding: 25px 20px; }
             h1 { font-size: 1.4em; }
-            .result .value { font-size: 2em; }
+            .results-grid { grid-template-columns: 1fr; }
+            .result-card .value { font-size: 1.6em; }
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>Calculadora de Gordura Corporal</h1>
-        <p class="subtitle">Método da Marinha dos EUA (US Navy)</p>
+        <h1>Gordura Corporal + IMC</h1>
+        <p class="subtitle">US Navy &amp; Índice de Massa Corporal</p>
 
         <div class="gender-select">
-            <button class="gender-btn active" data-gender="male" onclick="selectGender('male')">
-                Masculino
-            </button>
-            <button class="gender-btn" data-gender="female" onclick="selectGender('female')">
-                Feminino
-            </button>
+            <button class="gender-btn active" data-gender="male" onclick="selectGender('male')">Masculino</button>
+            <button class="gender-btn" data-gender="female" onclick="selectGender('female')">Feminino</button>
+        </div>
+
+        <div class="section-label">Dados para IMC</div>
+
+        <div class="input-group">
+            <label>Peso <span class="unit">(kg)</span></label>
+            <input type="number" id="weight" placeholder="Ex: 78" step="0.1" min="20" max="300">
         </div>
 
         <div class="input-group">
             <label>Altura <span class="unit">(cm)</span></label>
             <input type="number" id="height" placeholder="Ex: 175" step="0.1" min="50" max="250">
         </div>
+
+        <div class="section-label">Medidas para US Navy</div>
 
         <div class="input-group">
             <label>Pescoço <span class="unit">(cm)</span></label>
@@ -259,52 +263,50 @@
             <input type="number" id="hip" placeholder="Ex: 100" step="0.1" min="40" max="200">
         </div>
 
-        <button class="calc-btn" onclick="calculate()">Calcular % de Gordura</button>
+        <button class="calc-btn" onclick="calculate()">Calcular os Dois Métodos</button>
 
-        <div id="result" class="result" style="display: none;">
-            <div class="label">Percentual de Gordura Corporal</div>
-            <div class="value" id="bodyFatValue">--</div>
-            <div class="classification" id="classification"></div>
+        <div class="results-grid" id="results" style="display: none;">
+            <div class="result-card">
+                <div class="method-name">US Navy</div>
+                <div class="value" id="usnavyValue">--</div>
+                <div class="classification" id="usnavyClass"></div>
+            </div>
+            <div class="result-card">
+                <div class="method-name">IMC</div>
+                <div class="value" id="bmiValue">--</div>
+                <div class="classification" id="bmiClass"></div>
+            </div>
         </div>
 
         <div id="error" class="error" style="display: none;"></div>
 
         <div class="table-container">
-            <h3>Tabela de Referência</h3>
+            <h3>Referência: US Navy</h3>
             <table>
                 <thead>
-                    <tr>
-                        <th>Classificação</th>
-                        <th>Mulheres</th>
-                        <th>Homens</th>
-                    </tr>
+                    <tr><th>Classificação</th><th>Mulheres</th><th>Homens</th></tr>
                 </thead>
                 <tbody>
-                    <tr>
-                        <td><strong>Gordura Essencial</strong></td>
-                        <td>10–13%</td>
-                        <td>2–5%</td>
-                    </tr>
-                    <tr>
-                        <td><strong>Atletas</strong></td>
-                        <td>14–20%</td>
-                        <td>6–13%</td>
-                    </tr>
-                    <tr>
-                        <td><strong>Boa Forma</strong></td>
-                        <td>21–24%</td>
-                        <td>14–17%</td>
-                    </tr>
-                    <tr>
-                        <td><strong>Média</strong></td>
-                        <td>25–31%</td>
-                        <td>18–24%</td>
-                    </tr>
-                    <tr>
-                        <td><strong>Acima do Peso</strong></td>
-                        <td>32%+</td>
-                        <td>25%+</td>
-                    </tr>
+                    <tr><td><strong>Gordura Essencial</strong></td><td>10–13%</td><td>2–5%</td></tr>
+                    <tr><td><strong>Atletas</strong></td><td>14–20%</td><td>6–13%</td></tr>
+                    <tr><td><strong>Boa Forma</strong></td><td>21–24%</td><td>14–17%</td></tr>
+                    <tr><td><strong>Média</strong></td><td>25–31%</td><td>18–24%</td></tr>
+                    <tr><td><strong>Acima do Peso</strong></td><td>32%+</td><td>25%+</td></tr>
+                </tbody>
+            </table>
+
+            <h3>Referência: IMC</h3>
+            <table>
+                <thead>
+                    <tr><th>Classificação</th><th>IMC (kg/m²)</th></tr>
+                </thead>
+                <tbody>
+                    <tr><td><strong>Abaixo do peso</strong></td><td>&lt; 18,5</td></tr>
+                    <tr><td><strong>Peso normal</strong></td><td>18,5 – 24,9</td></tr>
+                    <tr><td><strong>Sobrepeso</strong></td><td>25 – 29,9</td></tr>
+                    <tr><td><strong>Obesidade Grau I</strong></td><td>30 – 34,9</td></tr>
+                    <tr><td><strong>Obesidade Grau II</strong></td><td>35 – 39,9</td></tr>
+                    <tr><td><strong>Obesidade Grau III</strong></td><td>&ge; 40</td></tr>
                 </tbody>
             </table>
         </div>
@@ -326,68 +328,100 @@
                 document.getElementById('hip').value = '';
             }
 
-            hideResult();
+            hideResults();
             hideError();
         }
 
         function calculate() {
             hideError();
-            hideResult();
+            hideResults();
 
             const height = parseFloat(document.getElementById('height').value);
+            const weight = parseFloat(document.getElementById('weight').value);
             const neck = parseFloat(document.getElementById('neck').value);
             const waist = parseFloat(document.getElementById('waist').value);
 
-            if (!height || !neck || !waist) {
-                showError('Preencha todos os campos obrigatórios: Altura, Pescoço e Cintura.');
+            let errors = [];
+            if (!weight) errors.push('Peso');
+            if (!height) errors.push('Altura');
+
+            if (!weight || !height) {
+                showError('Preencha: ' + errors.join(', ') + '. O IMC precisa de peso e altura.');
                 return;
             }
 
-            if (neck <= 0 || waist <= 0 || height <= 0) {
-                showError('As medidas devem ser maiores que zero.');
+            if (height <= 0 || weight <= 0) {
+                showError('Peso e altura devem ser maiores que zero.');
                 return;
             }
 
-            let bodyFat;
+            // IMC
+            const heightM = height / 100;
+            const bmi = weight / (heightM * heightM);
+            const bmiRounded = bmi.toFixed(1);
+            document.getElementById('bmiValue').textContent = bmiRounded + ' kg/m²';
+            const bmiClass = getBMIClassification(bmi);
+            const bmiClassEl = document.getElementById('bmiClass');
+            bmiClassEl.textContent = bmiClass.label;
+            bmiClassEl.className = 'classification ' + bmiClass.cssClass;
 
-            if (selectedGender === 'male') {
-                if (waist <= neck) {
-                    showError('A medida da cintura deve ser maior que a do pescoço.');
-                    return;
-                }
-                bodyFat = 86.010 * Math.log10(waist - neck) - 70.041 * Math.log10(height) + 36.76;
+            // US Navy
+            let usnavyMsg, usnavyClassLabel, usnavyCssClass;
+
+            if (!neck || !waist) {
+                usnavyMsg = '--';
+                usnavyClassLabel = 'Preencha pescoço e cintura';
+                usnavyCssClass = 'moderado';
+            } else if (neck <= 0 || waist <= 0) {
+                usnavyMsg = '--';
+                usnavyClassLabel = 'Medidas inválidas';
+                usnavyCssClass = 'moderado';
             } else {
-                const hip = parseFloat(document.getElementById('hip').value);
-                if (!hip) {
-                    showError('Preencha a medida do quadril.');
-                    return;
+                let bodyFat;
+                if (selectedGender === 'male') {
+                    if (waist <= neck) {
+                        usnavyMsg = '--';
+                        usnavyClassLabel = 'Cintura deve ser > Pescoço';
+                        usnavyCssClass = 'moderado';
+                    } else {
+                        bodyFat = 86.010 * Math.log10(waist - neck) - 70.041 * Math.log10(height) + 36.76;
+                    }
+                } else {
+                    const hip = parseFloat(document.getElementById('hip').value);
+                    if (!hip || hip <= 0) {
+                        usnavyMsg = '--';
+                        usnavyClassLabel = 'Preencha o quadril';
+                        usnavyCssClass = 'moderado';
+                    } else {
+                        const sum = waist + hip - neck;
+                        if (sum <= 0) {
+                            usnavyMsg = '--';
+                            usnavyClassLabel = 'Cintura+Quadril > Pescoço';
+                            usnavyCssClass = 'moderado';
+                        } else {
+                            bodyFat = 163.205 * Math.log10(sum) - 97.684 * Math.log10(height) - 78.387;
+                        }
+                    }
                 }
-                if (hip <= 0) {
-                    showError('A medida do quadril deve ser maior que zero.');
-                    return;
+
+                if (typeof bodyFat !== 'undefined') {
+                    bodyFat = Math.max(0, Math.min(60, bodyFat));
+                    usnavyMsg = bodyFat.toFixed(1) + '%';
+                    const c = getUSNavyClassification(bodyFat, selectedGender);
+                    usnavyClassLabel = c.label;
+                    usnavyCssClass = c.cssClass;
                 }
-                const sum = waist + hip - neck;
-                if (sum <= 0) {
-                    showError('Cintura + Quadril deve ser maior que Pescoço.');
-                    return;
-                }
-                bodyFat = 163.205 * Math.log10(sum) - 97.684 * Math.log10(height) - 78.387;
             }
 
-            bodyFat = Math.max(0, Math.min(60, bodyFat));
-            const rounded = bodyFat.toFixed(1);
+            document.getElementById('usnavyValue').textContent = usnavyMsg || '--';
+            const usnavyClassEl = document.getElementById('usnavyClass');
+            usnavyClassEl.textContent = usnavyClassLabel;
+            usnavyClassEl.className = 'classification ' + (usnavyCssClass || 'moderado');
 
-            document.getElementById('bodyFatValue').textContent = rounded + '%';
-
-            const classification = getClassification(bodyFat, selectedGender);
-            const classEl = document.getElementById('classification');
-            classEl.textContent = classification.label;
-            classEl.className = 'classification ' + classification.cssClass;
-
-            document.getElementById('result').style.display = 'block';
+            document.getElementById('results').style.display = 'grid';
         }
 
-        function getClassification(bodyFat, gender) {
+        function getUSNavyClassification(bodyFat, gender) {
             if (gender === 'male') {
                 if (bodyFat < 6) return { label: 'Gordura Essencial', cssClass: 'excelente' };
                 if (bodyFat < 14) return { label: 'Atleta', cssClass: 'excelente' };
@@ -403,6 +437,15 @@
             }
         }
 
+        function getBMIClassification(bmi) {
+            if (bmi < 18.5) return { label: 'Abaixo do peso', cssClass: 'bom' };
+            if (bmi < 25) return { label: 'Peso normal', cssClass: 'excelente' };
+            if (bmi < 30) return { label: 'Sobrepeso', cssClass: 'moderado' };
+            if (bmi < 35) return { label: 'Obesidade Grau I', cssClass: 'alto' };
+            if (bmi < 40) return { label: 'Obesidade Grau II', cssClass: 'muito-alto' };
+            return { label: 'Obesidade Grau III', cssClass: 'muito-alto' };
+        }
+
         function showError(msg) {
             const el = document.getElementById('error');
             el.textContent = msg;
@@ -413,8 +456,8 @@
             document.getElementById('error').style.display = 'none';
         }
 
-        function hideResult() {
-            document.getElementById('result').style.display = 'none';
+        function hideResults() {
+            document.getElementById('results').style.display = 'none';
         }
 
         if ('serviceWorker' in navigator) {
