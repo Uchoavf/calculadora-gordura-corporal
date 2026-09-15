@@ -1,2 +1,12 @@
 *.log
 .DS_Store
+
+# Secrets / credenciais
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.jks
+*.keystore
+credentials*.json
