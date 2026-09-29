@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Calculadora de Gordura Corporal - US Navy + IMC</title>
     <link rel="manifest" href="manifest.json">
+    <link rel="icon" href="icon.svg" type="image/svg+xml">
     <meta name="theme-color" content="#1a1a2e">
     <style>
         * {
@@ -93,7 +94,7 @@
             margin-bottom: 6px;
         }
 
-        .input-group .unit { color: #999; font-weight: 400; }
+        .input-group .unit { color: #666; font-weight: 400; }
 
         .input-group input {
             width: 100%;
@@ -106,7 +107,7 @@
         }
 
         .input-group input:focus { border-color: #0f3460; }
-        .input-group input::placeholder { color: #ccc; }
+        .input-group input::placeholder { color: #aaa; }
 
         .hidden { display: none; }
 
@@ -148,7 +149,7 @@
             font-size: 0.7em;
             text-transform: uppercase;
             letter-spacing: 0.5px;
-            color: #999;
+            color: #666;
             margin-bottom: 8px;
         }
 
@@ -216,6 +217,51 @@
         th:last-child { border-radius: 0 8px 0 0; }
         tr:hover { background: #f5f5f5; }
 
+
+        .gender-btn:focus-visible, .calc-btn:focus-visible, .clear-btn:focus-visible {
+            outline: 3px solid #4d90fe;
+            outline-offset: 2px;
+        }
+        .input-group input.invalid { border-color: #c62828; }
+        .input-group .hint { display: block; font-size: 0.75em; color: #777; margin-top: 4px; }
+
+        .actions { display: flex; gap: 10px; margin-top: 20px; }
+        .actions .calc-btn { margin-top: 0; flex: 1; }
+        .clear-btn {
+            padding: 16px 18px;
+            background: #fafafa;
+            color: #666;
+            border: 2px solid #e0e0e0;
+            border-radius: 12px;
+            font-size: 1em;
+            font-weight: 600;
+            cursor: pointer;
+        }
+        .clear-btn:hover { border-color: #0f3460; color: #0f3460; }
+
+        .extras {
+            margin-top: 12px;
+            padding: 14px;
+            background: #f0f4f8;
+            border-radius: 12px;
+            font-size: 0.85em;
+            color: #333;
+            line-height: 1.6;
+        }
+        .extras strong { color: #0f3460; }
+
+        .disclaimer {
+            margin-top: 20px;
+            font-size: 0.72em;
+            color: #888;
+            text-align: center;
+            line-height: 1.5;
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            * { transition: none !important; }
+        }
+
         @media (max-width: 480px) {
             .container { padding: 25px 20px; }
             h1 { font-size: 1.4em; }
@@ -225,47 +271,55 @@
     </style>
 </head>
 <body>
-    <div class="container">
+    <main class="container">
         <h1>Gordura Corporal + IMC</h1>
         <p class="subtitle">US Navy &amp; Índice de Massa Corporal</p>
 
-        <div class="gender-select">
-            <button class="gender-btn active" data-gender="male" onclick="selectGender('male')">Masculino</button>
-            <button class="gender-btn" data-gender="female" onclick="selectGender('female')">Feminino</button>
+        <form id="form" novalidate>
+        <div class="gender-select" role="group" aria-label="Sexo">
+            <button type="button" class="gender-btn active" data-gender="male" aria-pressed="true">Masculino</button>
+            <button type="button" class="gender-btn" data-gender="female" aria-pressed="false">Feminino</button>
         </div>
 
         <div class="section-label">Dados para IMC</div>
 
         <div class="input-group">
-            <label>Peso <span class="unit">(kg)</span></label>
-            <input type="number" id="weight" placeholder="Ex: 78" step="0.1" min="20" max="300">
+            <label for="weight">Peso <span class="unit">(kg)</span></label>
+            <input type="number" id="weight" inputmode="decimal" placeholder="Ex: 78" step="0.1" min="20" max="300">
         </div>
 
         <div class="input-group">
-            <label>Altura <span class="unit">(cm)</span></label>
-            <input type="number" id="height" placeholder="Ex: 175" step="0.1" min="50" max="250">
+            <label for="height">Altura <span class="unit">(cm)</span></label>
+            <input type="number" id="height" inputmode="decimal" placeholder="Ex: 175" step="0.1" min="50" max="250">
         </div>
 
         <div class="section-label">Medidas para US Navy</div>
 
         <div class="input-group">
-            <label>Pescoço <span class="unit">(cm)</span></label>
-            <input type="number" id="neck" placeholder="Ex: 38" step="0.1" min="20" max="80">
+            <label for="neck">Pescoço <span class="unit">(cm)</span></label>
+            <input type="number" id="neck" inputmode="decimal" placeholder="Ex: 38" step="0.1" min="20" max="80">
+            <span class="hint">Logo abaixo do pomo de adão, fita na horizontal.</span>
         </div>
 
         <div class="input-group">
-            <label>Cintura <span class="unit">(cm)</span></label>
-            <input type="number" id="waist" placeholder="Ex: 85" step="0.1" min="30" max="200">
+            <label for="waist">Cintura <span class="unit">(cm)</span></label>
+            <input type="number" id="waist" inputmode="decimal" placeholder="Ex: 85" step="0.1" min="30" max="200">
+            <span class="hint">Na altura do umbigo, sem apertar a fita.</span>
         </div>
 
         <div class="input-group hidden" id="hipGroup">
-            <label>Quadril <span class="unit">(cm)</span></label>
-            <input type="number" id="hip" placeholder="Ex: 100" step="0.1" min="40" max="200">
+            <label for="hip">Quadril <span class="unit">(cm)</span></label>
+            <input type="number" id="hip" inputmode="decimal" placeholder="Ex: 100" step="0.1" min="40" max="200">
+            <span class="hint">Na parte mais larga dos glúteos.</span>
         </div>
 
-        <button class="calc-btn" onclick="calculate()">Calcular os Dois Métodos</button>
+        <div class="actions">
+            <button type="submit" class="calc-btn">Calcular os Dois Métodos</button>
+            <button type="button" class="clear-btn" id="clearBtn" aria-label="Limpar campos">Limpar</button>
+        </div>
+        </form>
 
-        <div class="results-grid" id="results" style="display: none;">
+        <div class="results-grid" id="results" style="display: none;" aria-live="polite">
             <div class="result-card">
                 <div class="method-name">US Navy</div>
                 <div class="value" id="usnavyValue">--</div>
@@ -278,7 +332,9 @@
             </div>
         </div>
 
-        <div id="error" class="error" style="display: none;"></div>
+        <div id="extras" class="extras" style="display: none;" aria-live="polite"></div>
+
+        <div id="error" class="error" role="alert" style="display: none;"></div>
 
         <div class="table-container">
             <h3>Referência: US Navy</h3>
@@ -310,131 +366,41 @@
                 </tbody>
             </table>
         </div>
-    </div>
+
+        <p class="disclaimer">Estimativas apenas informativas — não substituem avaliação médica ou nutricional. O IMC não distingue massa muscular de gordura e o método US Navy tem margem de erro de vários pontos percentuais.</p>
+    </main>
 
     <script>
+        const STORAGE_KEY = 'gordura-corporal:v1';
+        const FIELDS = ['weight', 'height', 'neck', 'waist', 'hip'];
+        const $ = id => document.getElementById(id);
         let selectedGender = 'male';
 
-        function selectGender(gender) {
-            selectedGender = gender;
-            document.querySelectorAll('.gender-btn').forEach(btn => btn.classList.remove('active'));
-            document.querySelector(`[data-gender="${gender}"]`).classList.add('active');
-
-            const hipGroup = document.getElementById('hipGroup');
-            if (gender === 'female') {
-                hipGroup.classList.remove('hidden');
-            } else {
-                hipGroup.classList.add('hidden');
-                document.getElementById('hip').value = '';
-            }
-
-            hideResults();
-            hideError();
+        // ---------- Cálculos (funções puras) ----------
+        function calcBMI(weight, heightCm) {
+            const m = heightCm / 100;
+            return weight / (m * m);
         }
 
-        function calculate() {
-            hideError();
-            hideResults();
-
-            const height = parseFloat(document.getElementById('height').value);
-            const weight = parseFloat(document.getElementById('weight').value);
-            const neck = parseFloat(document.getElementById('neck').value);
-            const waist = parseFloat(document.getElementById('waist').value);
-
-            let errors = [];
-            if (!weight) errors.push('Peso');
-            if (!height) errors.push('Altura');
-
-            if (!weight || !height) {
-                showError('Preencha: ' + errors.join(', ') + '. O IMC precisa de peso e altura.');
-                return;
+        // Fórmulas oficiais US Navy em centímetros (densidade corporal -> % gordura, Siri)
+        function calcNavy(gender, heightCm, neck, waist, hip) {
+            if (gender === 'male') {
+                if (waist <= neck) return { error: 'Cintura deve ser maior que o pescoço' };
+                const density = 1.0324 - 0.19077 * Math.log10(waist - neck) + 0.15456 * Math.log10(heightCm);
+                return { value: 495 / density - 450 };
             }
-
-            if (height <= 0 || weight <= 0) {
-                showError('Peso e altura devem ser maiores que zero.');
-                return;
-            }
-
-            // IMC
-            const heightM = height / 100;
-            const bmi = weight / (heightM * heightM);
-            const bmiRounded = bmi.toFixed(1);
-            document.getElementById('bmiValue').textContent = bmiRounded + ' kg/m²';
-            const bmiClass = getBMIClassification(bmi);
-            const bmiClassEl = document.getElementById('bmiClass');
-            bmiClassEl.textContent = bmiClass.label;
-            bmiClassEl.className = 'classification ' + bmiClass.cssClass;
-
-            // US Navy
-            let usnavyMsg, usnavyClassLabel, usnavyCssClass;
-
-            if (!neck || !waist) {
-                usnavyMsg = '--';
-                usnavyClassLabel = 'Preencha pescoço e cintura';
-                usnavyCssClass = 'moderado';
-            } else if (neck <= 0 || waist <= 0) {
-                usnavyMsg = '--';
-                usnavyClassLabel = 'Medidas inválidas';
-                usnavyCssClass = 'moderado';
-            } else {
-                let bodyFat;
-                if (selectedGender === 'male') {
-                    if (waist <= neck) {
-                        usnavyMsg = '--';
-                        usnavyClassLabel = 'Cintura deve ser > Pescoço';
-                        usnavyCssClass = 'moderado';
-                    } else {
-                        bodyFat = 86.010 * Math.log10(waist - neck) - 70.041 * Math.log10(height) + 36.76;
-                    }
-                } else {
-                    const hip = parseFloat(document.getElementById('hip').value);
-                    if (!hip || hip <= 0) {
-                        usnavyMsg = '--';
-                        usnavyClassLabel = 'Preencha o quadril';
-                        usnavyCssClass = 'moderado';
-                    } else {
-                        const sum = waist + hip - neck;
-                        if (sum <= 0) {
-                            usnavyMsg = '--';
-                            usnavyClassLabel = 'Cintura+Quadril > Pescoço';
-                            usnavyCssClass = 'moderado';
-                        } else {
-                            bodyFat = 163.205 * Math.log10(sum) - 97.684 * Math.log10(height) - 78.387;
-                        }
-                    }
-                }
-
-                if (typeof bodyFat !== 'undefined') {
-                    bodyFat = Math.max(0, Math.min(60, bodyFat));
-                    usnavyMsg = bodyFat.toFixed(1) + '%';
-                    const c = getUSNavyClassification(bodyFat, selectedGender);
-                    usnavyClassLabel = c.label;
-                    usnavyCssClass = c.cssClass;
-                }
-            }
-
-            document.getElementById('usnavyValue').textContent = usnavyMsg || '--';
-            const usnavyClassEl = document.getElementById('usnavyClass');
-            usnavyClassEl.textContent = usnavyClassLabel;
-            usnavyClassEl.className = 'classification ' + (usnavyCssClass || 'moderado');
-
-            document.getElementById('results').style.display = 'grid';
+            const density = 1.29579 - 0.35004 * Math.log10(waist + hip - neck) + 0.22100 * Math.log10(heightCm);
+            return { value: 495 / density - 450 };
         }
 
         function getUSNavyClassification(bodyFat, gender) {
-            if (gender === 'male') {
-                if (bodyFat < 6) return { label: 'Gordura Essencial', cssClass: 'excelente' };
-                if (bodyFat < 14) return { label: 'Atleta', cssClass: 'excelente' };
-                if (bodyFat < 18) return { label: 'Boa Forma', cssClass: 'bom' };
-                if (bodyFat < 25) return { label: 'Média', cssClass: 'moderado' };
-                return { label: 'Acima do Peso', cssClass: 'alto' };
-            } else {
-                if (bodyFat < 14) return { label: 'Gordura Essencial', cssClass: 'excelente' };
-                if (bodyFat < 21) return { label: 'Atleta', cssClass: 'excelente' };
-                if (bodyFat < 25) return { label: 'Boa Forma', cssClass: 'bom' };
-                if (bodyFat < 32) return { label: 'Média', cssClass: 'moderado' };
-                return { label: 'Acima do Peso', cssClass: 'alto' };
-            }
+            // Limites contínuos (sem "buracos" entre as faixas da tabela)
+            const t = gender === 'male' ? [6, 14, 18, 25] : [14, 21, 25, 32];
+            if (bodyFat < t[0]) return { label: 'Gordura Essencial', cssClass: 'excelente' };
+            if (bodyFat < t[1]) return { label: 'Atleta', cssClass: 'excelente' };
+            if (bodyFat < t[2]) return { label: 'Boa Forma', cssClass: 'bom' };
+            if (bodyFat < t[3]) return { label: 'Média', cssClass: 'moderado' };
+            return { label: 'Acima do Peso', cssClass: 'alto' };
         }
 
         function getBMIClassification(bmi) {
@@ -446,23 +412,160 @@
             return { label: 'Obesidade Grau III', cssClass: 'muito-alto' };
         }
 
-        function showError(msg) {
-            const el = document.getElementById('error');
-            el.textContent = msg;
-            el.style.display = 'block';
+        const fmt = (n, d = 1) => n.toLocaleString('pt-BR', { minimumFractionDigits: d, maximumFractionDigits: d });
+
+        // ---------- Validação ----------
+        function readField(id) {
+            const el = $(id);
+            const raw = el.value.trim();
+            if (raw === '') return { empty: true, el };
+            const value = parseFloat(raw.replace(',', '.'));
+            const min = parseFloat(el.min), max = parseFloat(el.max);
+            const label = el.closest('.input-group').querySelector('label').firstChild.textContent.trim();
+            if (!isFinite(value) || value < min || value > max) {
+                return { invalid: true, el, msg: `${label} deve estar entre ${min} e ${max}` };
+            }
+            return { value, el };
         }
 
-        function hideError() {
-            document.getElementById('error').style.display = 'none';
+        function row(label, value) { return `<div>${label}: <strong>${value}</strong></div>`; }
+
+        // ---------- UI ----------
+        function selectGender(gender) {
+            selectedGender = gender;
+            document.querySelectorAll('.gender-btn').forEach(btn => {
+                const active = btn.dataset.gender === gender;
+                btn.classList.toggle('active', active);
+                btn.setAttribute('aria-pressed', active);
+            });
+            $('hipGroup').classList.toggle('hidden', gender !== 'female');
+            hideResults();
+            hideError();
+            save();
         }
 
-        function hideResults() {
-            document.getElementById('results').style.display = 'none';
+        function calculate() {
+            hideError();
+            hideResults();
+            FIELDS.forEach(id => $(id).classList.remove('invalid'));
+
+            const f = {};
+            FIELDS.forEach(id => f[id] = readField(id));
+
+            // Campos preenchidos porém inválidos
+            const bad = FIELDS.filter(id => f[id].invalid && (id !== 'hip' || selectedGender === 'female'));
+            if (bad.length) {
+                bad.forEach(id => f[id].el.classList.add('invalid'));
+                showError(bad.map(id => f[id].msg).join('. ') + '.');
+                f[bad[0]].el.focus();
+                return;
+            }
+
+            if (f.weight.empty || f.height.empty) {
+                const miss = [f.weight.empty && 'Peso', f.height.empty && 'Altura'].filter(Boolean);
+                (f.weight.empty ? f.weight : f.height).el.classList.add('invalid');
+                showError('Preencha: ' + miss.join(', ') + '. O IMC precisa de peso e altura.');
+                (f.weight.empty ? f.weight : f.height).el.focus();
+                return;
+            }
+
+            const weight = f.weight.value, height = f.height.value;
+
+            // IMC
+            const bmi = calcBMI(weight, height);
+            $('bmiValue').textContent = fmt(bmi) + ' kg/m²';
+            const bc = getBMIClassification(bmi);
+            $('bmiClass').textContent = bc.label;
+            $('bmiClass').className = 'classification ' + bc.cssClass;
+
+            // US Navy
+            const isFemale = selectedGender === 'female';
+            let navyValue = '--', navyLabel = '', navyCss = 'moderado', bodyFat = null;
+            const needed = ['neck', 'waist'].concat(isFemale ? ['hip'] : []);
+            const missing = needed.filter(id => f[id].empty);
+
+            if (missing.length) {
+                const names = { neck: 'pescoço', waist: 'cintura', hip: 'quadril' };
+                navyLabel = 'Preencha ' + missing.map(id => names[id]).join(', ');
+            } else {
+                const r = calcNavy(selectedGender, height, f.neck.value, f.waist.value, isFemale ? f.hip.value : 0);
+                if (r.error) {
+                    navyLabel = r.error;
+                } else {
+                    bodyFat = r.value;
+                    // Fora desta faixa a fórmula deixa de ser confiável
+                    if (bodyFat < 2 || bodyFat > 60) {
+                        bodyFat = null;
+                        navyLabel = 'Resultado fora do esperado — confira as medidas';
+                    } else {
+                        navyValue = fmt(bodyFat) + '%';
+                        const c = getUSNavyClassification(bodyFat, selectedGender);
+                        navyLabel = c.label;
+                        navyCss = c.cssClass;
+                    }
+                }
+            }
+            $('usnavyValue').textContent = navyValue;
+            $('usnavyClass').textContent = navyLabel;
+            $('usnavyClass').className = 'classification ' + navyCss;
+
+            // Extras
+            const hm = height / 100;
+            let html = row('Faixa de peso saudável (IMC 18,5–24,9)',
+                `${fmt(18.5 * hm * hm)} – ${fmt(24.9 * hm * hm)} kg`);
+            if (bodyFat !== null) {
+                const fat = weight * bodyFat / 100;
+                html += row('Massa gorda estimada', `${fmt(fat)} kg`);
+                html += row('Massa magra estimada', `${fmt(weight - fat)} kg`);
+            }
+            $('extras').innerHTML = html;
+            $('extras').style.display = 'block';
+
+            $('results').style.display = 'grid';
+            save();
         }
+
+        function clearAll() {
+            FIELDS.forEach(id => { $(id).value = ''; $(id).classList.remove('invalid'); });
+            hideResults();
+            hideError();
+            save();
+            $('weight').focus();
+        }
+
+        function showError(msg) { const el = $('error'); el.textContent = msg; el.style.display = 'block'; }
+        function hideError() { $('error').style.display = 'none'; }
+        function hideResults() { $('results').style.display = 'none'; $('extras').style.display = 'none'; }
+
+        // ---------- Persistência local ----------
+        function save() {
+            try {
+                const data = { gender: selectedGender };
+                FIELDS.forEach(id => data[id] = $(id).value);
+                localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+            } catch (e) { /* armazenamento indisponível */ }
+        }
+
+        function restore() {
+            try {
+                const data = JSON.parse(localStorage.getItem(STORAGE_KEY) || 'null');
+                if (!data) return;
+                FIELDS.forEach(id => { if (typeof data[id] === 'string') $(id).value = data[id]; });
+                if (data.gender === 'female') selectGender('female');
+            } catch (e) { /* dados corrompidos: ignora */ }
+        }
+
+        // ---------- Eventos ----------
+        document.querySelectorAll('.gender-btn').forEach(btn =>
+            btn.addEventListener('click', () => selectGender(btn.dataset.gender)));
+        $('form').addEventListener('submit', e => { e.preventDefault(); calculate(); });
+        $('clearBtn').addEventListener('click', clearAll);
+        FIELDS.forEach(id => $(id).addEventListener('input', () => { $(id).classList.remove('invalid'); save(); }));
+        restore();
 
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
-                navigator.serviceWorker.register('sw.js');
+                navigator.serviceWorker.register('sw.js').catch(() => {});
             });
         }
     </script>

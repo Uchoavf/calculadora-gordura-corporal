@@ -4,6 +4,21 @@ Histórico de versões da Calculadora de Gordura Corporal (US Navy + IMC).
 
 ---
 
+## v0.4.0 — 2026-09-29
+
+**Correção do cálculo US Navy e melhorias de qualidade/usabilidade**
+
+- **Correção:** fórmulas US Navy estavam na versão em polegadas com entrada em cm (resultado superestimado); agora usam as fórmulas métricas oficiais
+- Adicionado `sw.js` (antes era registrado mas não existia): app funciona offline
+- `manifest.json`: `start_url`/`scope` relativos (funciona no subcaminho do GitHub Pages) e ícone `icon.svg`
+- Enter envia o formulário; botão "Limpar"; dados salvos localmente (localStorage)
+- Validação dos limites min/max com destaque do campo e foco no erro; aceita vírgula decimal
+- Novos resultados: faixa de peso saudável, massa gorda e massa magra estimadas
+- Acessibilidade: labels associados, `aria-pressed`, `aria-live`, foco visível, melhor contraste
+- Números formatados em pt-BR; aviso de que são estimativas informativas
+
+---
+
 ## v0.3.0 — 2026-05-23
 
 **Adiciona cálculo de IMC e exibe resultados comparativos lado a lado**

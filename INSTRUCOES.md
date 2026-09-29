@@ -16,16 +16,18 @@ Calculadora web que estima o percentual de gordura corporal usando dois métodos
 
 ## Fórmulas
 
-### US Navy
+### US Navy (medidas em cm)
 
 **Homens:**
 ```
-% Gordura = 86,010 × log10(Cintura - Pescoço) - 70,041 × log10(Altura) + 36,76
+Densidade = 1,0324 - 0,19077 × log10(Cintura - Pescoço) + 0,15456 × log10(Altura)
+% Gordura = 495 ÷ Densidade - 450
 ```
 
 **Mulheres:**
 ```
-% Gordura = 163,205 × log10(Cintura + Quadril - Pescoço) - 97,684 × log10(Altura) - 78,387
+Densidade = 1,29579 - 0,35004 × log10(Cintura + Quadril - Pescoço) + 0,22100 × log10(Altura)
+% Gordura = 495 ÷ Densidade - 450
 ```
 
 ### IMC
@@ -68,7 +70,7 @@ IMC = Peso (kg) ÷ Altura² (m)
 - HTML5
 - CSS3
 - JavaScript (vanilla)
-- PWA (manifest + service worker)
+- PWA (manifest + service worker, funciona offline)
 
 ## Implantação
 
